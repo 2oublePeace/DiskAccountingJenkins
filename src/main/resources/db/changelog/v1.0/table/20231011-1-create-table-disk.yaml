@@ -1,0 +1,24 @@
+databaseChangeLog:
+  - changeSet:
+      id: 20231011-1-create-table-disk
+      author: Emiryan Vladimir
+      changes:
+        - createTable:
+            tableName: _disk
+            columns:
+              - column:
+                  name: id
+                  type: serial
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: title
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: is_rented
+                  type: boolean
+                  constraints:
+                    nullable: false

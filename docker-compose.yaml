@@ -1,0 +1,22 @@
+version: '3'
+services:
+  app:
+    image: 2oublepeace/disk-accounting-jenkins:1.0
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db
+    environment:
+      - SPRING_PROFILES_ACTIVE=dev
+      - DATABASE_USERNAME=postgres
+      - DATABASE_PASSWORD=postgres
+      - DATABASE_URL=jdbc:postgresql://db:5432/disk_accounting
+  db:
+    image: postgres
+    restart: always
+    environment:
+      - POSTGRES_DB=disk_accounting
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    expose:
+      - 5432
