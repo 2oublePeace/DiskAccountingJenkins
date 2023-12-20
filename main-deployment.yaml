@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: main-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: disk-accounting
+  template:
+    metadata:
+      labels:
+        app: disk-accounting
+    spec:
+      containers:
+      - name: disk-accounting
+        image: 2oublepeace/disk-accounting-kube_main
+        ports:
+          - containerPort: 8081
+        env:
+          - name: SPRING_PROFILES_ACTIVE
+            value: prod
+          - name: DATABASE_USERNAME
+            value: postgres
+          - name: DATABASE_PASSWORD
+            value: postgres
+          - name: DATABASE_URL
+            value: jdbc:postgresql://postgres-service:5432/disk_accounting
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: main-service
+spec:
+  selector:
+    app: disk-accounting
+  ports:
+    - protocol: TCP
+      port: 8081
+      targetPort: 8081

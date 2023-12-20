@@ -1,0 +1,54 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gateway-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: disk-accounting
+  template:
+    metadata:
+      labels:
+        app: disk-accounting
+    spec:
+      containers:
+      - name: disk-accounting
+        image: 2oublepeace/disk-accounting-kube_gateway
+        ports:
+          - containerPort: 8083
+        env:
+          - name: SPRING_PROFILES_ACTIVE
+            value: prod
+          - name: MAIN_ID
+            value: main
+          - name: MAIN_URI
+            value: http://main-service:8081
+          - name: MAIN_PREDICATE_PATH
+            value: /main/**
+          - name: MAIN_FILTER_REWRITE_PATH
+            value: /main/(?<path>.*), /$$\{path}
+          - name: MAIN_REMOVE_REQUEST_HEADER
+            value: Cookie, SetCookie
+          - name: REPORT_ID
+            value: report
+          - name: REPORT_URI
+            value: http://report-service:8082
+          - name: REPORT_PREDICATE_PATH
+            value: /report/**
+          - name: REPORT_FILTER_REWRITE_PATH
+            value: /report/(?<path>.*), /$$\{path}
+          - name: REPORT_REMOVE_REQUEST_HEADER
+            value: Cookie, SetCookie
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: gateway-service
+spec:
+  selector:
+    app: disk-accounting
+  ports:
+    - protocol: TCP
+      port: 8083
+      targetPort: 8083

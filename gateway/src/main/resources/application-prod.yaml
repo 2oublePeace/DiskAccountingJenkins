@@ -1,0 +1,22 @@
+spring:
+  application:
+    name: gateway
+  cloud:
+    gateway:
+      routes:
+        - id: ${MAIN_ID}
+          uri: ${MAIN_URI}
+          predicates:
+            - Path=${MAIN_PREDICATE_PATH}
+          filters:
+            - RewritePath=${MAIN_FILTER_REWRITE_PATH}
+            - RemoveRequestHeader=${MAIN_REMOVE_REQUEST_HEADER}
+        - id: ${REPORT_ID}
+          uri: ${REPORT_URI}
+          predicates:
+            - Path=${REPORT_PREDICATE_PATH}
+          filters:
+            - RewritePath=${REPORT_FILTER_REWRITE_PATH}
+            - RemoveRequestHeader=${REPORT_REMOVE_REQUEST_HEADER}
+server:
+  port: 8083
