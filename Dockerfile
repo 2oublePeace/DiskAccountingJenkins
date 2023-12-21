@@ -2,7 +2,9 @@ FROM gradle:jdk17 as builder
 
 WORKDIR /app
 
-COPY . .
+COPY build.gradle.kts settings.gradle.kts /app/
+
+COPY src /app/src/
 
 RUN gradle clean build
 
@@ -18,8 +20,8 @@ ENV DATABASE_PASSWORD jrmjFwJojvYHqdRU
 
 ENV DATABASE_URL jdbc:postgresql://db.faealilgdzehkthqhxwf.supabase.co:5432/postgres?user=postgres&password=jrmjFwJojvYHqdRU
 
-COPY --from=builder /app/build/libs/*.jar ./disk-accounting.jar
+COPY --from=builder /app/build/libs/DiskAccounting-0.0.1-SNAPSHOT.jar /app/
 
-CMD ["java", "-jar", "disk-accounting.jar"]
+CMD ["java", "-jar", "/app/DiskAccounting-0.0.1-SNAPSHOT.jar"]
 
 EXPOSE 8080

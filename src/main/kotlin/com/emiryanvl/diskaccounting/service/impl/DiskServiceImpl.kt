@@ -11,8 +11,8 @@ import org.springframework.stereotype.Service
 @Service
 class DiskServiceImpl(val diskRepository: DiskRepository) : DiskService {
     override fun get(id: Long): DiskResponse {
-        val diskEntity = diskRepository.findById(id).orElseThrow(notFoundException("Диск $id не найден", id))
-        return DiskResponse(diskEntity.title, diskEntity.isRented, diskEntity.id)
+        val entity = diskRepository.findById(id).orElseThrow(notFoundException("Диск $id не найден", id))
+        return DiskResponse(entity.title, entity.isRented, entity.id)
     }
 
     override fun getAll(): List<DiskResponse> {
@@ -25,13 +25,13 @@ class DiskServiceImpl(val diskRepository: DiskRepository) : DiskService {
     }
 
     override fun update(id: Long, request: DiskRequest): DiskResponse {
-        val diskEntity = diskRepository.save(
+        val entity = diskRepository.save(
            editDisk(
                diskRepository.findById(id).orElseThrow(notFoundException("Диск $id не найден", id)),
                request
            )
         )
-        return DiskResponse(diskEntity.title, diskEntity.isRented, diskEntity.id)
+        return DiskResponse(entity.title, entity.isRented, entity.id)
     }
 
     override fun delete(id: Long) {
@@ -40,8 +40,8 @@ class DiskServiceImpl(val diskRepository: DiskRepository) : DiskService {
         }
     }
 
-    fun editDisk(diskEntity: DiskEntity, diskRequest: DiskRequest): DiskEntity {
-        return diskEntity.apply {
+    fun editDisk(entity: DiskEntity, diskRequest: DiskRequest): DiskEntity {
+        return entity.apply {
             this.title = diskRequest.title
             this.isRented = diskRequest.isRented
         }
