@@ -4,7 +4,7 @@ WORKDIR /app
 
 COPY . .
 
-RUN gradle bootJar
+RUN gradle clean build
 
 FROM eclipse-temurin:17-jre-alpine
 
