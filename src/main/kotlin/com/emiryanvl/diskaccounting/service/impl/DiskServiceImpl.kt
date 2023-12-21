@@ -12,16 +12,16 @@ import org.springframework.stereotype.Service
 class DiskServiceImpl(val diskRepository: DiskRepository) : DiskService {
     override fun get(id: Long): DiskResponse {
         val diskEntity = diskRepository.findById(id).orElseThrow(notFoundException("Диск $id не найден", id))
-        return DiskResponse(diskEntity.title, diskEntity.isRented)
+        return DiskResponse(diskEntity.title, diskEntity.isRented, diskEntity.id)
     }
 
     override fun getAll(): List<DiskResponse> {
-        return diskRepository.findAll().map { DiskResponse(it.title, it.isRented) }
+        return diskRepository.findAll().map { DiskResponse(it.title, it.isRented, it.id) }
     }
 
     override fun create(request: DiskRequest): DiskResponse {
-        diskRepository.save(DiskEntity(title = request.title, isRented = request.isRented))
-        return DiskResponse(request.title, request.isRented)
+        val entity = diskRepository.save(DiskEntity(title = request.title, isRented = request.isRented))
+        return DiskResponse(entity.title, entity.isRented, entity.id)
     }
 
     override fun update(id: Long, request: DiskRequest): DiskResponse {
@@ -31,7 +31,7 @@ class DiskServiceImpl(val diskRepository: DiskRepository) : DiskService {
                request
            )
         )
-        return DiskResponse(diskEntity.title, diskEntity.isRented)
+        return DiskResponse(diskEntity.title, diskEntity.isRented, diskEntity.id)
     }
 
     override fun delete(id: Long) {

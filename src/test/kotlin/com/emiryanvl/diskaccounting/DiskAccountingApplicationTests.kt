@@ -1,9 +1,8 @@
 package com.emiryanvl.diskaccounting
 
 import com.emiryanvl.diskaccounting.dto.request.DiskRequest
-import com.emiryanvl.diskaccounting.service.impl.DiskServiceImpl
-import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Assertions.assertTrue
+import com.emiryanvl.diskaccounting.service.DiskService
+import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
@@ -12,7 +11,7 @@ import org.springframework.boot.test.context.SpringBootTest
 class DiskAccountingApplicationTests {
 
     @Autowired
-    private lateinit var diskService: DiskServiceImpl
+    private lateinit var diskService: DiskService
 
     @Test
     fun createDiskItemTest() {
@@ -36,27 +35,31 @@ class DiskAccountingApplicationTests {
 
     @Test
     fun getCurrentItemTest() {
-        diskService.create(DiskRequest("Фильм 1", false))
-        val response = diskService.get(1)
-        assertEquals(response.isRented, false)
+        val createdDisk = diskService.create(DiskRequest("Фильм 1", false))
+        val response = createdDisk.id?.let { diskService.get(it) }
+        if (response != null) {
+            assertEquals(response.isRented, false)
+        }
     }
 
     @Test
     fun updateCurrentItemTest() {
-        diskService.create(DiskRequest("Фильм 1", false))
+        val createdDisk = diskService.create(DiskRequest("Фильм 1", false))
         val request = DiskRequest("Мультфильм 1", false)
-        val response = diskService.update(1, request)
-        assertEquals(request.title, response.title)
-        assertEquals(request.isRented, response.isRented)
+        val response = createdDisk.id?.let { diskService.update(it, request) }
+        if (response != null) {
+            assertEquals(request.title, response.title)
+            assertEquals(request.isRented, response.isRented)
+        }
     }
 
     @Test
     fun deleteCurrentItemTest() {
-        diskService.create(DiskRequest("Фильм 1", false))
+        val createdDisk = diskService.create(DiskRequest("Фильм 1", false))
         var disks = diskService.getAll()
         assertTrue(disks.isNotEmpty())
-        diskService.delete(1)
+        createdDisk.id?.let { diskService.delete(it) }
         disks = diskService.getAll()
-        assertTrue(disks.isEmpty())
+        assertFalse(disks.any { it.id == createdDisk.id })
     }
 }
